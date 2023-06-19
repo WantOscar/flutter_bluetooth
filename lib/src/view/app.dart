@@ -72,7 +72,7 @@ class _AppState extends State<App> {
         setState(() {
           // scanResultList = results;
           scanResultList = results
-              .where((e) => e.device.name == 'LED BLE MESH SERVER')
+              .where((e) => e.device.name == '202316705 KIM DONG WOOK')
               .toList();
         });
       });
@@ -190,6 +190,9 @@ class _AppState extends State<App> {
         } else if (led == 3) {
           List<int> value = utf8.encode("3");
           await characteristic.write(value);
+        } else if (led == 4) {
+          List<int> value = utf8.encode("4");
+          await characteristic.write(value);
         }
       } catch (e) {
         print('Error');
@@ -246,6 +249,10 @@ class _AppState extends State<App> {
                     ElevatedButton(
                       onPressed: () => toggleLED(3),
                       child: const Text('LED 3'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () => toggleLED(4),
+                      child: const Text('STOP'),
                     ),
                   ],
                 ),
