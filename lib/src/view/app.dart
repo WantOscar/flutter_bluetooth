@@ -53,11 +53,12 @@ class _AppState extends State<App> {
   }
 
   void toggleState() {
-    isScanning = !isScanning;
+    setState(() {
+      isScanning = !isScanning;
+    });
 
     if (isScanning) {
-      flutterBlue.startScan(
-          scanMode: ScanMode(scan_mode), allowDuplicates: true);
+      flutterBlue.startScan(timeout: const Duration(seconds: 5));
       scan();
     } else {
       flutterBlue.stopScan();
@@ -70,8 +71,9 @@ class _AppState extends State<App> {
       flutterBlue.scanResults.listen((results) {
         setState(() {
           // scanResultList = results;
-          scanResultList =
-              results.where((e) => e.device.name == 'KIM_BLUETOOTH').toList();
+          scanResultList = results
+              .where((e) => e.device.name == 'LED BLE MESH SERVER')
+              .toList();
         });
       });
     }
@@ -168,12 +170,9 @@ class _AppState extends State<App> {
   }
 
   void toggleLED(int led) async {
-    if (selectedDevice != null &&
-        selectedDevice!.state == BluetoothDeviceState.connected) {
-      await Future.delayed(Duration(milliseconds: 500)); // 딜레이 추가
-
-      final serviceId = Guid('0000ffe0-0000-1000-8000-00805f9b34fb');
-      final characteristicId = Guid('0000ffe1-0000-1000-8000-00805f9b34fb');
+    if (selectedDevice != null) {
+      final serviceId = Guid('4fafc201-1fb5-459e-8fcc-c5c9c331914b');
+      final characteristicId = Guid('beb5483e-36e1-4688-b7f5-ea07361b26a8');
 
       final services = await selectedDevice!.discoverServices();
       final service = services.firstWhere((s) => s.uuid == serviceId);
@@ -181,15 +180,19 @@ class _AppState extends State<App> {
       final characteristic =
           characteristics.firstWhere((c) => c.uuid == characteristicId);
 
-      if (led == 1) {
-        List<int> value = utf8.encode("1");
-        await characteristic.write(value);
-      } else if (led == 2) {
-        List<int> value = utf8.encode("2");
-        await characteristic.write(value);
-      } else if (led == 3) {
-        List<int> value = utf8.encode("3");
-        await characteristic.write(value);
+      try {
+        if (led == 1) {
+          List<int> value = utf8.encode("1");
+          await characteristic.write(value);
+        } else if (led == 2) {
+          List<int> value = utf8.encode("2");
+          await characteristic.write(value);
+        } else if (led == 3) {
+          List<int> value = utf8.encode("3");
+          await characteristic.write(value);
+        }
+      } catch (e) {
+        print('Error');
       }
     }
   }
@@ -225,8 +228,7 @@ class _AppState extends State<App> {
         onPressed: toggleState,
         child: Icon(isScanning ? Icons.stop : Icons.search),
       ),
-      bottomNavigationBar: selectedDevice != null &&
-              selectedDevice!.state == BluetoothDeviceState.connected
+      bottomNavigationBar: selectedDevice != null
           ? BottomAppBar(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
