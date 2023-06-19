@@ -9,7 +9,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  final title = 'Flutter BLE Scan Demo';
+  final title = '202316705 김동욱';
 
   @override
   Widget build(BuildContext context) {
