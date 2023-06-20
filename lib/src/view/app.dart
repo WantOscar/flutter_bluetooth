@@ -37,12 +37,10 @@ class _AppState extends State<App> {
 
   void _handleConnectionSuccess() {
     print('Device connected successfully.');
-    // 연결이 성공한 경우 처리할 로직 추가
   }
 
   void _handleDisconnection() {
     print('Device disconnected.');
-    // 연결이 해제된 경우 처리할 로직 추가
   }
 
   @override
